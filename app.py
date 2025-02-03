@@ -7,10 +7,10 @@ API_URL = "https://api.together.xyz/v1/chat/completions"
 API_KEY = st.secrets["TOGETHER_API_KEY"]
 
 # Definir el contexto del chatbot
-context = """
-Context: You are immersed in the dynamic world of contemporary philosophy, where ideas and thinkers continually shape our understanding of reality, ethics, and society. The landscape of modern philosophy is vast and ever-evolving, with numerous philosophers contributing groundbreaking ideas across various sub-disciplines. To navigate this complex terrain and provide insightful guidance, a structured approach is essential. Your task is to create a comprehensive guide that introduces and explains the thought of the ten most prominent philosophers of our time. This guide will serve as a foundational resource for students, educators, and enthusiasts seeking to understand the cutting-edge developments in philosophy.
+contexto = """
+Contexto: Estás inmerso en el mundo dinámico de la filosofía contemporánea, donde las ideas y los pensadores moldean continuamente nuestra comprensión de la realidad, la ética y la sociedad. El panorama de la filosofía moderna es vasto y en constante evolución, con numerosos filósofos que contribuyen con ideas revolucionarias en diversas subdisciplinas. Para navegar por este terreno complejo y ofrecer una guía útil, es esencial un enfoque estructurado. Tu tarea es crear una guía completa que introduzca y explique el pensamiento de los diez filósofos más destacados de nuestro tiempo. Esta guía servirá como un recurso fundamental para estudiantes, educadores y entusiastas que buscan comprender los desarrollos más avanzados en la filosofía.
 
-Role: You are a distinguished tutor of philosophy with over two decades of experience in academia. Your expertise spans the entire spectrum of philosophical thought, with a particular focus on contemporary philosophy. You are renowned for your ability to distill complex ideas into accessible and engaging explanations. Your thought leadership is evident in your numerous publications, keynote speeches, and innovative teaching methods. You possess an encyclopedic knowledge of the works and contributions of the most influential philosophers of our era.
+Rol: Eres un tutor distinguido de filosofía con más de dos décadas de experiencia en el mundo académico. Tu experiencia abarca todo el espectro del pensamiento filosófico, con un enfoque particular en la filosofía contemporánea. Eres conocido por tu habilidad para simplificar ideas complejas y hacerlas accesibles y atractivas. Tu liderazgo intelectual es evidente en tus numerosas publicaciones, conferencias magistrales y métodos de enseñanza innovadores. Posees un conocimiento enciclopédico sobre las obras y contribuciones de los filósofos más influyentes de nuestra época.
 """
 
 # Interfaz de usuario de Streamlit
@@ -18,21 +18,21 @@ st.title("Chatbot de Filosofía Contemporánea")
 st.write("Conversa con un tutor experto en filosofía contemporánea. Pregunta sobre filósofos, conceptos y teorías.")
 
 # Entrada del usuario
-user_input = st.text_input("Tu pregunta o comentario:", "")
+entrada_usuario = st.text_input("Tu pregunta o comentario:", "")
 
-if user_input:
+if entrada_usuario:
     # Llamada a la API para obtener respuesta
-    headers = {
+    encabezados = {
         "Authorization": f"Bearer {API_KEY}",
         "Content-Type": "application/json"
     }
-    data = {
+    datos = {
         "model": "deepseek-ai/DeepSeek-R1",
         "messages": [
-            {"role": "system", "content": context},
-            {"role": "user", "content": user_input}
+            {"role": "system", "content": contexto},
+            {"role": "user", "content": entrada_usuario}
         ],
-        "max_tokens": 500,
+        "max_tokens": 3000,
         "temperature": 0.7,
         "top_p": 0.7,
         "top_k": 50,
@@ -40,12 +40,12 @@ if user_input:
         "stop": ["<\u2758end\u2758of\u2758sentence\u2758>"]
     }
 
-    response = requests.post(API_URL, headers=headers, json=data)
+    respuesta = requests.post(API_URL, headers=encabezados, json=datos)
 
-    if response.status_code == 200:
-        response_data = response.json()
-        chatbot_reply = response_data.get('choices', [{}])[0].get('message', {}).get('content', "No tengo una respuesta en este momento.")
+    if respuesta.status_code == 200:
+        datos_respuesta = respuesta.json()
+        respuesta_chatbot = datos_respuesta.get('choices', [{}])[0].get('message', {}).get('content', "No tengo una respuesta en este momento.")
         st.write("### Respuesta del Chatbot:")
-        st.write(chatbot_reply)
+        st.write(respuesta_chatbot)
     else:
         st.error("Error al obtener respuesta del chatbot. Intenta nuevamente.")
